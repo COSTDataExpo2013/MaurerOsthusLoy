@@ -82,6 +82,14 @@ surveyhistdata <- function(data, variable, year = NULL, bin.width) {
   return(outdata)
 }
 
+# Function stripping legend from plot
+g_legend <- function(p){
+  tmp <- ggplotGrob(p)
+  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  legend <- tmp$grobs[[leg]]
+  return(legend)
+}
+
 # Function to create figures 3-6 more easily
 city_grid_plot <- function(data, lowcolor, highcolor) {
   
@@ -269,12 +277,12 @@ p4 <- qplot(year, aesthetic, data = subset(cityyearagg, colorcode == "All Other 
   geom_line(data = subset(cityyearagg, colorcode != "All Other Cities"), aes(group = city, colour = colorcode, linetype = linetype), size = I(1.25)) + 
   scale_colour_manual("City", values = citycolors[-1]) + 
   scale_linetype_identity() +
-#   scale_linetype_manual("City", values = c("dashed", "dotdash", "dotted", "twodash")) +
   scale_x_continuous(breaks = c(2008, 2009, 2010), labels = c(2008, 2009, 2010)) + 
   ylab("Aesthetics") + 
   xlab("Year") + 
-  guides(colour = guide_legend(override.aes = list(linetype = c("dotdash", "dotted", "twodash", "dashed"), size = .75))) + 
-  theme(legend.position="top")
+  theme(legend.position="top", legend.text=element_text(size = 12), legend.title=element_text(size = 12)) + 
+  guides(colour = guide_legend(override.aes = list(linetype = c("dotdash", "dotted", "twodash", "dashed"), size = .9), 
+                               keywidth = 3))
 
 ## All plots in same graphics window
 legend <- g_legend(p4)
