@@ -121,17 +121,23 @@ dat$maritalStatus <- revalue(dat$maritalStatus, c("Separated, OR" = "Separated")
 dat$eduMax <- revalue(dat$eduMax, c("College graduate, OR" = "College graduate"))
 
 # Reordering the levels of income
-dat$income <- factor(dat$income, levels = levels(dat$income)[c(10, 2, 3, 4, 5, 6, 7, 1, 8, 9)])
-
-
-# race
-levels(dat$race)[c(1,3,4,6,7,10,12,13,17,20)] <- c("(NA)", "Hispanic","More than one",
-                                                   "(NA)", "American Indian or Alaskan Native", "Asian", "(DK)",
-                                                   "(DK)", "(NA)", "Some other race")
+dat$income <- factor(dat$income, 
+                     levels = c("Under $15,000", "$15,000 to $24,999", 
+                                "$25,000 to $34,999", "$35,000 to $44,999",
+                                "$45,000 to $54,999", "$55,000 to $74,999", 
+                                "$75,000 to $99,999", "$100,000 or over",
+                                "(DK)", "(Refused)") )
+  
+# # race
+# dat$race <- revalue(dat$race, c("Yes, female respondent available" = "female", 
+#                                 "Yes, male respondent available" = "male"))
+# levels(dat$race)[c(1,3,4,6,7,10,12,13,17,20)] <- c("(NA)", "Hispanic","More than one",
+#                                                    "(NA)", "American Indian or Alaskan Native", "Asian", "(DK)",
+#                                                    "(DK)", "(NA)", "Some other race")
 
 # gender
-levels(dat$gender)[1] <- "female"
-levels(dat$gender)[2] <- "male"                                     
+dat$gender <- revalue(dat$gender,c("Yes, female respondent available" = "female", 
+                                   "Yes, male respondent available" = "male"))                                   
 
 
 ## delete all rows with missing survey weights ##
