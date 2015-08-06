@@ -258,68 +258,68 @@ head(cityyearagg)
 #### Create City Year Difference Data (units of percent change from previous year) ####
 ##-----------------------------------------------------------------------------------##
 
-cityyear89 <- ddply(cityyearagg,.(city), summarise,
-                    passion=passion[year==2009]/passion[year==2008]*100-100,
-                    loyalty=loyalty[year==2009]/loyalty[year==2008]*100-100,
-                    basicServ=basicServ[year==2009]/basicServ[year==2008]*100-100,
-                    leadership=leadership[year==2009]/leadership[year==2008]*100-100,
-                    education=education[year==2009]/education[year==2008]*100-100,
-                    safety=safety[year==2009]/safety[year==2008]*100-100,
-                    aesthetic=aesthetic[year==2009]/aesthetic[year==2008]*100-100,
-                    economy=economy[year==2009]/economy[year==2008]*100-100,
-                    socialOff=socialOff[year==2009]/socialOff[year==2008]*100-100,
-                    civicInv=civicInv[year==2009]/civicInv[year==2008]*100-100,
-                    openness=openness[year==2009]/openness[year==2008]*100-100,
-                    socialCap=socialCap[year==2009]/socialCap[year==2008]*100-100,
-                    domains=domains[year==2009]/domains[year==2008]*100-100,
-                    comOff=comOff[year==2009]/comOff[year==2008]*100-100,
-                    comAttach=comAttach[year==2009]/comAttach[year==2008]*100-100,
-                    lat=lat[1],
-                    long=long[1])
+cityyear89 <- ddply(cityyearagg, .(city), summarise,
+                    passion = passion[year == 2009] / passion[year == 2008] * 100 - 100,
+                    loyalty = loyalty[year == 2009] / loyalty[year == 2008] * 100 - 100,
+                    basicServ = basicServ[year == 2009] / basicServ[year == 2008] * 100 - 100,
+                    leadership = leadership[year == 2009] / leadership[year == 2008] * 100 - 100,
+                    education = education[year == 2009] / education[year == 2008] * 100 - 100,
+                    safety = safety[year == 2009] / safety[year == 2008] * 100 - 100,
+                    aesthetic = aesthetic[year == 2009] / aesthetic[year == 2008] * 100 - 100,
+                    economy = economy[year == 2009] / economy[year == 2008] * 100 - 100,
+                    socialOff = socialOff[year == 2009] / socialOff[year == 2008] * 100 - 100,
+                    civicInv = civicInv[year == 2009] / civicInv[year == 2008] * 100 - 100,
+                    openness= openness[year == 2009] / openness[year == 2008] * 100 - 100,
+                    socialCap = socialCap[year == 2009] / socialCap[year == 2008] * 100 - 100,
+                    domains = domains[year == 2009] / domains[year == 2008] * 100 - 100,
+                    comOff = comOff[year == 2009] / comOff[year == 2008] * 100 - 100,
+                    comAttach = comAttach[year == 2009] / comAttach[year == 2008] * 100 - 100,
+                    lat = lat[1],
+                    long = long[1])
 
 cityyear89$Year <- "2009/2008"
 cityyear910 <- ddply(cityyearagg,.(city), summarise,
-                     passion=passion[year==2010]/passion[year==2009]*100-100,
-                     loyalty=loyalty[year==2010]/loyalty[year==2009]*100-100,
-                     basicServ=basicServ[year==2010]/basicServ[year==2009]*100-100,
-                     leadership=leadership[year==2010]/leadership[year==2009]*100-100,
-                     education=education[year==2010]/education[year==2009]*100-100,
-                     safety=safety[year==2010]/safety[year==2009]*100-100,
-                     aesthetic=aesthetic[year==2010]/aesthetic[year==2009]*100-100,
-                     economy=economy[year==2010]/economy[year==2009]*100-100,
-                     socialOff=socialOff[year==2010]/socialOff[year==2009]*100-100,
-                     civicInv=civicInv[year==2010]/civicInv[year==2009]*100-100,
-                     openness=openness[year==2010]/openness[year==2009]*100-100,
-                     socialCap=socialCap[year==2010]/socialCap[year==2009]*100-100,
-                     domains=domains[year==2010]/domains[year==2009]*100-100,
-                     comOff=comOff[year==2010]/comOff[year==2009]*100-100,
-                     comAttach=comAttach[year==2010]/comAttach[year==2009]*100-100,
+                     passion=passion[year == 2010] / passion[year == 2009] * 100 - 100,
+                     loyalty=loyalty[year == 2010] / loyalty[year == 2009] * 100 - 100,
+                     basicServ=basicServ[year == 2010] / basicServ[year == 2009] * 100 - 100,
+                     leadership=leadership[year == 2010] / leadership[year == 2009] * 100 - 100,
+                     education=education[year == 2010] / education[year == 2009] * 100 - 100,
+                     safety=safety[year == 2010] / safety[year == 2009] * 100 - 100,
+                     aesthetic=aesthetic[year == 2010] / aesthetic[year == 2009] * 100 - 100,
+                     economy=economy[year == 2010] / economy[year == 2009] * 100 - 100,
+                     socialOff=socialOff[year == 2010] / socialOff[year == 2009] * 100 - 100,
+                     civicInv=civicInv[year == 2010] / civicInv[year == 2009] * 100 - 100,
+                     openness=openness[year == 2010] / openness[year == 2009] * 100 - 100,
+                     socialCap=socialCap[year == 2010] / socialCap[year == 2009] * 100 - 100,
+                     domains=domains[year == 2010] / domains[year == 2009] * 100 - 100,
+                     comOff=comOff[year == 2010] / comOff[year == 2009] * 100 - 100,
+                     comAttach=comAttach[year == 2010] / comAttach[year == 2009] * 100 - 100,
                      lat=lat[1],
                      long=long[1])
 cityyear910$Year <- "2010/2009"
 
 cityyear810 <- ddply(cityyearagg,.(city), summarise,
-                     passion=passion[year==2010]/passion[year==2008]*100-100,
-                     loyalty=loyalty[year==2010]/loyalty[year==2008]*100-100,
-                     basicServ=basicServ[year==2010]/basicServ[year==2008]*100-100,
-                     leadership=leadership[year==2010]/leadership[year==2008]*100-100,
-                     education=education[year==2010]/education[year==2008]*100-100,
-                     safety=safety[year==2010]/safety[year==2008]*100-100,
-                     aesthetic=aesthetic[year==2010]/aesthetic[year==2008]*100-100,
-                     economy=economy[year==2010]/economy[year==2008]*100-100,
-                     socialOff=socialOff[year==2010]/socialOff[year==2008]*100-100,
-                     civicInv=civicInv[year==2010]/civicInv[year==2008]*100-100,
-                     openness=openness[year==2010]/openness[year==2008]*100-100,
-                     socialCap=socialCap[year==2010]/socialCap[year==2008]*100-100,
-                     domains=domains[year==2010]/domains[year==2008]*100-100,
-                     comOff=comOff[year==2010]/comOff[year==2008]*100-100,
-                     comAttach=comAttach[year==2010]/comAttach[year==2008]*100-100,
+                     passion=passion[year == 2010] / passion[year == 2008] * 100 - 100,
+                     loyalty=loyalty[year == 2010] / loyalty[year == 2008] * 100 - 100,
+                     basicServ=basicServ[year == 2010] / basicServ[year == 2008] * 100 - 100,
+                     leadership=leadership[year == 2010] / leadership[year == 2008] * 100 - 100,
+                     education=education[year == 2010] / education[year == 2008] * 100 - 100,
+                     safety=safety[year == 2010] / safety[year == 2008] * 100 - 100,
+                     aesthetic=aesthetic[year == 2010] / aesthetic[year == 2008] * 100 - 100,
+                     economy=economy[year == 2010] / economy[year == 2008] * 100 - 100,
+                     socialOff=socialOff[year == 2010] / socialOff[year == 2008] * 100 - 100,
+                     civicInv=civicInv[year == 2010] / civicInv[year == 2008] * 100 - 100,
+                     openness=openness[year == 2010] / openness[year == 2008] * 100 - 100,
+                     socialCap=socialCap[year == 2010] / socialCap[year == 2008] * 100 - 100,
+                     domains=domains[year == 2010] / domains[year == 2008] * 100 - 100,
+                     comOff=comOff[year == 2010] / comOff[year == 2008] * 100 - 100,
+                     comAttach=comAttach[year == 2010] / comAttach[year == 2008] * 100 - 100,
                      lat=lat[1],
                      long=long[1])
 cityyear810$Year <- "2010/2008"
 
-cityyearpercha <- rbind(cityyear89,cityyear910,cityyear810)
-cityyearpercha$Year <- factor(cityyearpercha$Year,levels=c("2009/2008","2010/2009","2010/2008"))
+cityyearpercha <- rbind(cityyear89, cityyear910, cityyear810)
+cityyearpercha$Year <- factor(cityyearpercha$Year, levels = c("2009/2008", "2010/2009", "2010/2008"))
 
 ##-------------------------##
 #### Write All CSV Files ####
@@ -329,11 +329,15 @@ cityyearpercha$Year <- factor(cityyearpercha$Year,levels=c("2009/2008","2010/200
 
 # write individual data set
 write.csv(dat, "data/AllYearsAllData.csv", row.names=FALSE)
+
 # write aggregated over city
 write.csv(cityagg2, "data/cityagg.csv", row.names=FALSE)
+
 # write aggregated over city and year
 write.csv(cityyearagg, "data/cityyearagg.csv", row.names=FALSE)
+
 # write percent change over year data
 write.csv(cityyearpercha, "data/cityyearpercha.csv", row.names=FALSE)
 
+# write aggregated over city and year w/o lat & long
 write.csv(cityYearSvywt, "data/cityYearSvywt.csv", row.names=FALSE)
