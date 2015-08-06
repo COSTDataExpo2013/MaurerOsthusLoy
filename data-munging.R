@@ -148,105 +148,70 @@ dat <- dat[-which(is.na(dat$svywt)), ]
 ##-----------------------------------------------------------------------------##
 #### CREATE COMPOSITE SCORE DATA, AGGREGATED BY CITY AND YEAR (USING SVYWTS) ####
 ##-----------------------------------------------------------------------------##
-comp <- dat[ ,c("city","year","svywt","passion","loyalty",
-                "basicServ","leadership","education","safety",
-                "aesthetic","economy","socialOff","civicInv",
-                "openness","socialCap","domains","comOff","comAttach")]
 
-# Calculate this to standardize all composite scores
+# Standardizing all composite scores
 # 1 is the best possible score. 
 # 0 is the worst possible score.
+dat <- mutate(dat, passion_rs = rescale01(passion),
+              leadership_rs = rescale01(leadership),
+              loyalty_rs = rescale01(loyalty),
+              basicServ_rs = rescale01(basicServ),
+              education_rs = rescale01(education),
+              safety_rs = rescale01(safety),
+              aesthetic_rs = rescale01(aesthetic),
+              economy_rs = rescale01(economy),
+              socialOff_rs = rescale01(socialOff),
+              civicInv_rs = rescale01(civicInv),
+              openness_rs = rescale01(openness),
+              socialCap_rs = rescale01(socialCap),
+              domains_rs = rescale01(domains),
+              comOff_rs = rescale01(comOff),
+              comAttach_rs = rescale01(comAttach))
 
-passionn <- min(comp$passion,na.rm=T)
-passionx <- max(comp$passion,na.rm=T)-passionn
-
-leadershipn <- min(comp$leadership,na.rm=T)
-leadershipx <- max(comp$leadership,na.rm=T)-leadershipn
-
-loyaltyn <- min(comp$loyalty,na.rm=T)
-loyaltyx <- max(comp$loyalty,na.rm=T)-loyaltyn
-
-basicServn <- min(comp$basicServ,na.rm=T)
-basicServx <- max(comp$basicServ,na.rm=T)-basicServn
-
-educationn <- min(comp$education,na.rm=T)
-educationx <- max(comp$education,na.rm=T)-educationn
-
-safetyn <- min(comp$safety,na.rm=T)
-safetyx <- max(comp$safety,na.rm=T)-safetyn
-
-aestheticn <- min(comp$aesthetic,na.rm=T)
-aestheticx <- max(comp$aesthetic,na.rm=T)-aestheticn
-
-economyn <- min(comp$economy,na.rm=T)
-economyx <- max(comp$economy,na.rm=T)-economyn
-
-socialOffn <- min(comp$socialOff,na.rm=T)
-socialOffx <- max(comp$socialOff,na.rm=T)-socialOffn
-
-civicInvn <- min(comp$civicInv,na.rm=T)
-civicInvx <- max(comp$civicInv,na.rm=T)-civicInvn
-
-opennessn <- min(comp$openness,na.rm=T)
-opennessx <- max(comp$openness,na.rm=T)-opennessn
-
-socialCapn <- min(comp$socialCap,na.rm=T)
-socialCapx <- max(comp$socialCap,na.rm=T)-socialCapn
-
-domainsn <- min(comp$domains,na.rm=T)
-domainsx <- max(comp$domains,na.rm=T)-domainsn
-
-comOffn <- min(comp$comOff,na.rm=T)
-comOffx <- max(comp$comOff,na.rm=T)-comOffn
-
-comAttachn <- min(comp$comAttach,na.rm=T)
-comAttachx <- max(comp$comAttach,na.rm=T)-comAttachn
-
-cityYearSvywt <- ddply(dat,.(city,year),summarise,
-                       wt=sum(svywt),
-                       people=length(svywt),
-                       passion=sum(svywt*((passion-passionn)/passionx),na.rm=T)/sum(svywt[!is.na(passion)]),
-                       leadership=sum(svywt*((leadership-leadershipn)/leadershipx),na.rm=T)/sum(svywt[!is.na(leadership)]),
-                       loyalty=sum(svywt*((loyalty-loyaltyn)/loyaltyx),na.rm=T)/sum(svywt[!is.na(loyalty)]),
-                       basicServ=sum(svywt*((basicServ-basicServn)/basicServx),na.rm=T)/sum(svywt[!is.na(basicServ)]),
-                       education=sum(svywt*((education-educationn)/educationx),na.rm=T)/sum(svywt[!is.na(education)]),
-                       safety=sum(svywt*((safety-safetyn)/safetyx),na.rm=T)/sum(svywt[!is.na(safety)]),
-                       aesthetic=sum(svywt*((aesthetic-aestheticn)/aestheticx),na.rm=T)/sum(svywt[!is.na(aesthetic)]),
-                       economy=sum(svywt*((economy-economyn)/economyx),na.rm=T)/sum(svywt[!is.na(economy)]),
-                       socialOff=sum(svywt*((socialOff-socialOffn)/socialOffx),na.rm=T)/sum(svywt[!is.na(socialOff)]),
-                       civicInv=sum(svywt*((civicInv-civicInvn)/civicInvx),na.rm=T)/sum(svywt[!is.na(civicInv)]),
-                       openness=sum(svywt*((openness-opennessn)/opennessx),na.rm=T)/sum(svywt[!is.na(openness)]),
-                       socialCap=sum(svywt*((socialCap-socialCapn)/socialCapx),na.rm=T)/sum(svywt[!is.na(socialCap)]),
-                       domains=sum(svywt*((domains-domainsn)/domainsx),na.rm=T)/sum(svywt[!is.na(domains)]),
-                       comOff=sum(svywt*((comOff-comOffn)/comOffx),na.rm=T)/sum(svywt[!is.na(comOff)]),
-                       comAttach=sum(svywt*((comAttach-comAttachn)/comAttachx),na.rm=T)/sum(svywt[!is.na(comAttach)]))
+# Aggregating
+cityYearSvywt <- ddply(dat, .(city, year), summarise,
+                       wt = sum(svywt),
+                       people = length(svywt),
+                       passion = weighted.mean(passion_rs, svywt, na.rm = TRUE),
+                       leadership =  weighted.mean(leadership_rs, svywt, na.rm = TRUE),
+                       loyalty = weighted.mean(loyalty_rs, svywt, na.rm = TRUE),
+                       basicServ = weighted.mean(basicServ_rs, svywt, na.rm = TRUE),
+                       education = weighted.mean(education_rs, svywt, na.rm = TRUE),
+                       safety = weighted.mean(safety_rs, svywt, na.rm = TRUE),
+                       aesthetic = weighted.mean(aesthetic_rs, svywt, na.rm = TRUE),
+                       economy = weighted.mean(economy_rs, svywt, na.rm = TRUE),
+                       socialOff = weighted.mean(socialOff_rs, svywt, na.rm = TRUE),
+                       civicInv = weighted.mean(civicInv_rs, svywt, na.rm = TRUE),
+                       openness = weighted.mean(openness_rs, svywt, na.rm = TRUE),
+                       socialCap = weighted.mean(socialCap_rs, svywt, na.rm = TRUE),
+                       domains = weighted.mean(domains_rs, svywt, na.rm = TRUE),
+                       comOff = weighted.mean(comOff_rs, svywt, na.rm = TRUE),
+                       comAttach = weighted.mean(comAttach_rs, svywt, na.rm = TRUE))
 
 head(cityYearSvywt)
-
 
 ##--------------------------------------------------------------------##
 #### CREATE COMPOSITE SCORE DATA, AGGREGATED BY CITY (USING SVYWTS) ####
 ##--------------------------------------------------------------------##
 
-cityagg <- ddply(dat,.(city),summarise,
-                 wt=sum(svywt),
-                 people=length(svywt),
-                 passion=sum(svywt*((passion-passionn)/passionx),na.rm=T)/sum(svywt[!is.na(passion)]),
-                 leadership=sum(svywt*((leadership-leadershipn)/leadershipx),na.rm=T)/sum(svywt[!is.na(leadership)]),
-                 loyalty=sum(svywt*((loyalty-loyaltyn)/loyaltyx),na.rm=T)/sum(svywt[!is.na(loyalty)]),
-                 basicServ=sum(svywt*((basicServ-basicServn)/basicServx),na.rm=T)/sum(svywt[!is.na(basicServ)]),
-                 education=sum(svywt*((education-educationn)/educationx),na.rm=T)/sum(svywt[!is.na(education)]),
-                 safety=sum(svywt*((safety-safetyn)/safetyx),na.rm=T)/sum(svywt[!is.na(safety)]),
-                 aesthetic=sum(svywt*((aesthetic-aestheticn)/aestheticx),na.rm=T)/sum(svywt[!is.na(aesthetic)]),
-                 economy=sum(svywt*((economy-economyn)/economyx),na.rm=T)/sum(svywt[!is.na(economy)]),
-                 socialOff=sum(svywt*((socialOff-socialOffn)/socialOffx),na.rm=T)/sum(svywt[!is.na(socialOff)]),
-                 civicInv=sum(svywt*((civicInv-civicInvn)/civicInvx),na.rm=T)/sum(svywt[!is.na(civicInv)]),
-                 openness=sum(svywt*((openness-opennessn)/opennessx),na.rm=T)/sum(svywt[!is.na(openness)]),
-                 socialCap=sum(svywt*((socialCap-socialCapn)/socialCapx),na.rm=T)/sum(svywt[!is.na(socialCap)]),
-                 domains=sum(svywt*((domains-domainsn)/domainsx),na.rm=T)/sum(svywt[!is.na(domains)]),
-                 comOff=sum(svywt*((comOff-comOffn)/comOffx),na.rm=T)/sum(svywt[!is.na(comOff)]),
-                 comAttach=sum(svywt*((comAttach-comAttachn)/comAttachx),na.rm=T)/sum(svywt[!is.na(comAttach)]))
-
+cityagg <- ddply(dat, .(city), summarise,
+                 wt = sum(svywt),
+                 people = length(svywt),
+                 passion = weighted.mean(passion_rs, svywt, na.rm = TRUE),
+                 leadership =  weighted.mean(leadership_rs, svywt, na.rm = TRUE),
+                 loyalty = weighted.mean(loyalty_rs, svywt, na.rm = TRUE),
+                 basicServ = weighted.mean(basicServ_rs, svywt, na.rm = TRUE),
+                 education = weighted.mean(education_rs, svywt, na.rm = TRUE),
+                 safety = weighted.mean(safety_rs, svywt, na.rm = TRUE),
+                 aesthetic = weighted.mean(aesthetic_rs, svywt, na.rm = TRUE),
+                 economy = weighted.mean(economy_rs, svywt, na.rm = TRUE),
+                 socialOff = weighted.mean(socialOff_rs, svywt, na.rm = TRUE),
+                 civicInv = weighted.mean(civicInv_rs, svywt, na.rm = TRUE),
+                 openness = weighted.mean(openness_rs, svywt, na.rm = TRUE),
+                 socialCap = weighted.mean(socialCap_rs, svywt, na.rm = TRUE),
+                 domains = weighted.mean(domains_rs, svywt, na.rm = TRUE),
+                 comOff = weighted.mean(comOff_rs, svywt, na.rm = TRUE),
+                 comAttach = weighted.mean(comAttach_rs, svywt, na.rm = TRUE))
 
 
 ##-------------------------------------------------##

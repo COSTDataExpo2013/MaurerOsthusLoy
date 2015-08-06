@@ -7,17 +7,8 @@
 
 
 
-# Creating composite scales
+# Rescale to min = 0; max = 1
 rescale01 <- function(x) {
   rng <- range(x, na.rm = TRUE)
   (x - rng[1]) / (rng[2] - rng[1])
 }
-
-composite_score <- function(x, wt) {
-  x <- rescale01(x)
-  x <- x[!is.na(x)]
-  
-  mean(wt * x)
-}
-
-# Computing indices
