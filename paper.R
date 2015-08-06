@@ -1,6 +1,11 @@
 ############################################################
 # Preliminaries
 ############################################################
+# Remember to make sure you're in the right
+# working directory!
+
+library(checkpoint)
+checkpoint("2015-08-06")
 
 ## Loading necessary libraries
 library(GGally)
