@@ -7,6 +7,7 @@
 # load libraries
 library(ggplot2)
 library(reshape2)
+library(plyr)
 library(lubridate)
 library(stringr)
 library(mapproj)
@@ -348,13 +349,13 @@ cityyearpercha$Year <- factor(cityyearpercha$Year,levels=c("2009/2008","2010/200
 
 # Uncomment to save files.
 
-## write individual data set
-# write.csv(dat, "data/AllYearsAllData.csv", row.names=FALSE)
-## write aggregated over city
-# write.csv(cityagg2, "data/cityagg.csv", row.names=FALSE)
-## write aggregated over city and year
-# write.csv(cityyearagg, "data/cityyearagg.csv", row.names=FALSE)
-## write percent change over year data
-# write.csv(cityyearpercha, "data/cityyearpercha.csv", row.names=FALSE)
-#
-# write.csv(cityYearSvywt, "data/cityYearSvywt.csv", row.names=FALSE)
+# write individual data set
+write.csv(dat, "data/AllYearsAllData.csv", row.names=FALSE)
+# write aggregated over city
+write.csv(cityagg2, "data/cityagg.csv", row.names=FALSE)
+# write aggregated over city and year
+write.csv(cityyearagg, "data/cityyearagg.csv", row.names=FALSE)
+# write percent change over year data
+write.csv(cityyearpercha, "data/cityyearpercha.csv", row.names=FALSE)
+
+write.csv(cityYearSvywt, "data/cityYearSvywt.csv", row.names=FALSE)
