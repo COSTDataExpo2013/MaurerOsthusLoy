@@ -17,21 +17,26 @@ library(mapproj)
 library(maps)
 library(maptools)
 
+# source functions
+source("functions.R")
+
 
 ##-------------------------------------------##
 #### CREATE CLEAN DATA ON INDIVIDUAL LEVEL ####
 ##-------------------------------------------##
 
 # load each year data
-dat1 <- read.csv("data/sotc08.csv", header=TRUE)
-dat2 <- read.csv("data/sotc09.csv", header=TRUE)
-dat3 <- read.csv("data/sotc10.csv", header=TRUE)
-varnamesfile <- read.csv("Codebooks/JSMDATAEXPOMATCHINGVARS.csv", header=TRUE)
+dat1 <- read.csv("data/sotc08.csv", header = TRUE)
+dat2 <- read.csv("data/sotc09.csv", header = TRUE)
+dat3 <- read.csv("data/sotc10.csv", header = TRUE)
+varnamesfile <- read.csv("Codebooks/JSMDATAEXPOMATCHINGVARS.csv", header = TRUE)
 
 
 ### fixes needed prior to combining files ###
+
 # QD2A missing from 08 data --> add NA's
 dat1$QD2A <- factor(rep(NA, nrow(dat1)))
+
 # 2009 and 2010 need CitySubtypeWord (QS5) converted into a character from a factor
 # 2008 needs it converted from an integer so that they will play nice
 dat1$QS5 <- as.character(dat1$QS5)
@@ -67,81 +72,80 @@ for (i in 1:9){
 }
 table(dat[,6:7])
 
-#Several Variables need a 5 point scale cleanup
+# Several Variables need a 5-point scale cleanup
 # comSat
-levels(dat$comSat)[7] <- "5"
-levels(dat$comSat)[8] <- "1"
+dat$comSat <- revalue(dat$comSat, c("Extremely satisfied" = 5, "Not at all satisfied" = 1))
+
 # proud
-levels(dat$proud)[7] <- "5"
-levels(dat$proud)[8] <- "1"
+dat$proud <- revalue(dat$proud, c("Strongly agree" = 5, "Strongly disagree" = 1))
+
 # comp5YearPast
-levels(dat$comp5YearPast)[7] <- "5"
-levels(dat$comp5YearPast)[8] <- "1"
+dat$comp5YearPast <- revalue(dat$comp5YearPast, c("Much better" = 5, "Much worse" = 1))
+
 # comp5YearFuture
-levels(dat$comp5YearFuture)[6] <- "5"
-levels(dat$comp5YearFuture)[7] <- "1"
-# affordHousing
-levels(dat$affordHousing)[8] <- "5"
-levels(dat$affordHousing)[7] <- "1"
-# jobAvail
-levels(dat$jobAvail)[8] <- "5"
-levels(dat$jobAvail)[7] <- "1"
-# imAccept
-levels(dat$imAccept)[7] <- "5"
-levels(dat$imAccept)[6] <- "1"
-# raceAccept
-levels(dat$raceAccept)[7] <- "5"
-levels(dat$raceAccept)[6] <- "1"
-# gayAccept
-levels(dat$gayAccept)[7] <- "5"
-levels(dat$gayAccept)[6] <- "1"
-# econCondNow
-levels(dat$econCondNow)[7] <- "5"
-levels(dat$econCondNow)[6] <- "1"
+dat$comp5YearFuture <- revalue(dat$comp5YearFuture, c("Will be much better" = 5, "Will be much worse" = 1))
+
+# affordHousing, jobAvail, imAccept, raceAccept, gayAccept, econCondNow
+vgood_vbad <- subset(dat, select = c(affordHousing, jobAvail, imAccept, raceAccept, gayAccept, econCondNow))
+dat <- subset(dat, select = -c(affordHousing, jobAvail, imAccept, raceAccept, gayAccept, econCondNow))
+
+vgood_vbad <- apply(vgood_vbad, 2, revalue, replace = c("Very good" = 5, "Very bad" = 1))
+dat <- cbind(dat, vgood_vbad)
+
+dat$affordHousing <- revalue(dat$affordHousing, c("Very good" = 5, "Very bad" = 1))
+
+
+
 # econCondFuture
 levels(dat$econCondFuture)[3] <- "Same"
+
 # employStatus
 levels(dat$employStatus)[1] <- "Disabled/unable to work" 
+
 # incomeSat
-levels(dat$incomeSat)[6] <- "5"
-levels(dat$incomeSat)[7] <- "1" 
+dat$incomeSat <- revalue(dat$incomeSat, c("Strongly agree" = 5, "Strongly disagree" = 1))
+
 # crimeNow
-levels(dat$crimeNow)[6] <- "5"
-levels(dat$crimeNow)[7] <- "1"
-# crime
-levels(dat$crimeNow)[6] <- "5"
-levels(dat$crimeNow)[7] <- "1"
+dat$crimeNow <- revalue(dat$crimeNow, c("Extremely high" = 1, "Extremely low" = 5))
+
 # closeFriends
-levels(dat$closeFriends)[7] <- "Most"
+dat$closeFriends <- revalue(dat$closeFriends, c("Most, OR" = "Most"))
+
 # closeFam
-levels(dat$closeFam)[7] <- "Most"
+dat$closeFam <- revalue(dat$closeFam, c("Most, OR" = "Most"))
+
 # maritalStatus
-levels(dat$maritalStatus)[8] <- "Separated"
+dat$maritalStatus <- revalue(dat$maritalStatus, c("Separated, OR" = "Separated"))
+
 # eduMax
-levels(dat$eduMax)[4] <- "College graduate"
-# income
-dat$income <- factor(dat$income, levels=levels(dat$income)[c(10,2,3,4,5,6,7,1,8,9)])
+dat$eduMax <- revalue(dat$eduMax, c("College graduate, OR" = "College graduate"))
+
+# Reordering the levels of income
+dat$income <- factor(dat$income, levels = levels(dat$income)[c(10, 2, 3, 4, 5, 6, 7, 1, 8, 9)])
+
+
 # race
 levels(dat$race)[c(1,3,4,6,7,10,12,13,17,20)] <- c("(NA)", "Hispanic","More than one",
                                                    "(NA)", "American Indian or Alaskan Native", "Asian", "(DK)",
                                                    "(DK)", "(NA)", "Some other race")
+
 # gender
 levels(dat$gender)[1] <- "female"
 levels(dat$gender)[2] <- "male"                                     
 
 
 ## delete all rows with missing survey weights ##
-dat <- dat[-which(is.na(dat$svywt)),]
+dat <- dat[-which(is.na(dat$svywt)), ]
 
 
 
 ##-----------------------------------------------------------------------------##
 #### CREATE COMPOSITE SCORE DATA, AGGREGATED BY CITY AND YEAR (USING SVYWTS) ####
 ##-----------------------------------------------------------------------------##
-comp<-dat[,c("city","year","svywt","passion","loyalty",
-             "basicServ","leadership","education","safety",
-             "aesthetic","economy","socialOff","civicInv",
-             "openness","socialCap","domains","comOff","comAttach")]
+comp <- dat[ ,c("city","year","svywt","passion","loyalty",
+                "basicServ","leadership","education","safety",
+                "aesthetic","economy","socialOff","civicInv",
+                "openness","socialCap","domains","comOff","comAttach")]
 
 # Calculate this to standardize all composite scores
 # 1 is the best possible score. 
