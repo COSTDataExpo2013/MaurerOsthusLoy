@@ -4,6 +4,9 @@
 # Remember to make sure you're in the right
 # working directory!
 
+library(checkpoint)
+checkpoint("2015-08-06")
+
 # load libraries
 library(ggplot2)
 library(reshape2)
