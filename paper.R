@@ -19,6 +19,7 @@ library(maptools)
 library(lattice)
 library(plyr)
 library(gridExtra)
+library(grid)
 library(scales)
 library(RColorBrewer)
 
@@ -531,10 +532,12 @@ closefriends2 <- ddply(closefriends1, .(closeFam, closeFriends), summarise,
 
 
 famorder <- c(1, 5, 2, 4, 3)
-closefriends2$closeFam <- factor(closefriends2$closeFam, levels = levels(closefriends2$closeFam)[famorder])
+closefriends2$closeFam <- factor(closefriends2$closeFam, 
+                                 levels = levels(closefriends2$closeFam)[famorder])
 
 friendorder <- c(1, 5, 2, 4, 3)
-closefriends2$closeFriends <- factor(closefriends2$closeFriends, levels = levels(closefriends2$closeFriends)[friendorder])
+closefriends2$closeFriends <- factor(closefriends2$closeFriends, 
+                                     levels = levels(closefriends2$closeFriends)[friendorder])
 
 
 ## Constructing the heat map - Figure 8
@@ -562,69 +565,117 @@ ymax <- 4.1
 xmin <- 2.5
 xmax <- 4.5
 
+## Summarizing acceptance indices for plotting
+accept <- melt(alldat, id.vars = c("city"), measure.vars = c("gayAccept", "imAccept", "raceAccept"))
+
+accept <- ddply(alldat, .(city), summarise, 
+                ga = mean(as.numeric(as.character(gayAccept)), na.rm = T),
+                im = mean(as.numeric(as.character(imAccept)), na.rm = T),
+                ra = mean(as.numeric(as.character(raceAccept)), na.rm = T),
+                comattach = mean(comAttach, na.rm = T))
+accept$colorcode <- "All Other Citites"
+accept[accept$city %in% c("Biloxi, MS", "Detroit, MI", "Milledgeville, GA", "State College, PA"), ]$colorcode <- as.character(accept$city[accept$city %in% c("Biloxi, MS", "Detroit, MI", "Milledgeville, GA", "State College, PA")])
+accept_4cities <- accept[accept$colorcode != "All Other Citites", ]
+accept_4cities$glyph <- str_sub(accept_4cities$city, 1, 1)
+
 ## Relationship between Acceptance of Gays/Lesbians and Community Attachment
-# summarizing acceptance index for plotting
-gayaccept <- ddply(alldat, .(city), summarise, 
-                   ga = mean(as.numeric(as.character(gayAccept)), na.rm = T), 
-                   comattach = mean(comAttach, na.rm = T))
-
-gayaccept$colorcode <- "All Other Citites"
-gayaccept[gayaccept$city %in% c("Biloxi, MS", "Detroit, MI", "Milledgeville, GA", "State College, PA"), ]$colorcode <- as.character(gayaccept$city[gayaccept$city %in% c("Biloxi, MS", "Detroit, MI", "Milledgeville, GA", "State College, PA")])
-
-gayaccept_4cities <- gayaccept[gayaccept$colorcode != "All Other Citites", ]
-gayaccept_4cities$glyph <- str_sub(gayaccept_4cities$city, 1, 1)
-
-# code for scatterplot
-gayacceptplot <- qplot(ga, comattach, data = subset(gayaccept, colorcode == "All Other Citites"), geom = "point", color = I("gray")) +
+gayacceptplot <- qplot(ga, comattach, data = subset(accept, colorcode == "All Other Citites"), 
+                       geom = "point", color = I("gray")) +
   xlab("How accepting are you\nof gay and lesbian people?") + 
   ylab(NULL) +
   theme_bw() + 
   theme(legend.position = "") + 
   scale_x_continuous(limits = c(xmin, xmax)) + 
   scale_y_continuous(limits = c(ymin, ymax)) + 
-  geom_text(data = gayaccept_4cities, aes(label = glyph), colour = colorscheme[-1], size = 7) + 
+  geom_text(data = accept_4cities, aes(label = glyph), colour = colorscheme[-1], size = 7) + 
   coord_fixed()
 
-
 ## Relationship between Acceptance of Immigrants and Community Attachment
-# summarizing acceptance index for plotting
-imaccept <- ddply(alldat, .(city), summarise, im = mean(as.numeric(as.character(imAccept)), na.rm = T), comattach = mean(comAttach, na.rm = T))
-imaccept$colorcode <- "All Other Citites"
-imaccept[imaccept$city %in% c("Biloxi, MS", "Detroit, MI", "Milledgeville, GA", "State College, PA"), ]$colorcode <- as.character(imaccept$city[imaccept$city %in% c("Biloxi, MS", "Detroit, MI", "Milledgeville, GA", "State College, PA")])
-
-imaccept_4cities <- imaccept[imaccept$colorcode != "All Other Citites", ]
-imaccept_4cities$glyph <- str_sub(imaccept_4cities$city, 1, 1)
-
-# code for scatterplot
-immigrantplot <- qplot(im, comattach, data = subset(imaccept, colorcode == "All Other Citites"), geom = "point", color = I("gray")) + 
+immigrantplot <- qplot(im, comattach, data = subset(accept, colorcode == "All Other Citites"), 
+                       geom = "point", color = I("gray")) + 
   xlab("How accepting are you\nof immigrants?") + 
   ylab(NULL) + 
   theme_bw() + 
   theme(legend.position = "") + 
   scale_x_continuous(limits = c(xmin, xmax)) + 
   scale_y_continuous(limits = c(ymin, ymax)) + 
-  geom_text(data = imaccept_4cities, aes(label = glyph), colour = colorscheme[-1], size = 7) + 
+  geom_text(data = accept_4cities, aes(label = glyph), colour = colorscheme[-1], size = 7) + 
   coord_fixed() 
 
-
 ## Relationship between Acceptance of Racial/Ethnic Minorities and Community Attachment
-# summarizing acceptance index for plotting
-raceaccept <- ddply(alldat, .(city), summarise, ra = mean(as.numeric(as.character(raceAccept)), na.rm = T), comattach = mean(comAttach, na.rm = T))
-raceaccept$colorcode <- "All Other Citites"
-raceaccept[raceaccept$city %in% c("Biloxi, MS", "Detroit, MI", "Milledgeville, GA", "State College, PA"), ]$colorcode <- as.character(raceaccept$city[raceaccept$city %in% c("Biloxi, MS", "Detroit, MI", "Milledgeville, GA", "State College, PA")])
-
-raceaccept_4cities <- raceaccept[raceaccept$colorcode != "All Other Citites", ]
-raceaccept_4cities$glyph <- str_sub(raceaccept_4cities$city, 1, 1)
-
-# code for scatterplot
-raceplot <- qplot(ra, comattach, data = subset(raceaccept, colorcode == "All Other Citites"), geom = "point", color = I("gray")) +
+raceplot <- qplot(ra, comattach, data = subset(accept, colorcode == "All Other Citites"), 
+                  geom = "point", color = I("gray")) +
   xlab("How accepting are you\nof racial/ethnic minorities?") + 
   ylab(NULL) + 
   theme_bw() + theme(legend.position = "") + 
   scale_x_continuous(limits = c(xmin, xmax)) + 
   scale_y_continuous(limits = c(ymin, ymax)) + 
-  geom_text(data = raceaccept_4cities, aes(label = glyph), colour = colorscheme[-1], size = 7) + 
+  geom_text(data = accept_4cities, aes(label = glyph), colour = colorscheme[-1], size = 7) + 
   coord_fixed()
+
+# ## Relationship between Acceptance of Gays/Lesbians and Community Attachment
+# # summarizing acceptance index for plotting
+# gayaccept <- ddply(alldat, .(city), summarise, 
+#                    ga = mean(as.numeric(as.character(gayAccept)), na.rm = T), 
+#                    comattach = mean(comAttach, na.rm = T))
+# 
+# gayaccept$colorcode <- "All Other Citites"
+# gayaccept[gayaccept$city %in% c("Biloxi, MS", "Detroit, MI", "Milledgeville, GA", "State College, PA"), ]$colorcode <- as.character(gayaccept$city[gayaccept$city %in% c("Biloxi, MS", "Detroit, MI", "Milledgeville, GA", "State College, PA")])
+# 
+# gayaccept_4cities <- gayaccept[gayaccept$colorcode != "All Other Citites", ]
+# gayaccept_4cities$glyph <- str_sub(gayaccept_4cities$city, 1, 1)
+# 
+# # code for scatterplot
+# gayacceptplot <- qplot(ga, comattach, data = subset(gayaccept, colorcode == "All Other Citites"), geom = "point", color = I("gray")) +
+#   xlab("How accepting are you\nof gay and lesbian people?") + 
+#   ylab(NULL) +
+#   theme_bw() + 
+#   theme(legend.position = "") + 
+#   scale_x_continuous(limits = c(xmin, xmax)) + 
+#   scale_y_continuous(limits = c(ymin, ymax)) + 
+#   geom_text(data = gayaccept_4cities, aes(label = glyph), colour = colorscheme[-1], size = 7) + 
+#   coord_fixed()
+
+
+# ## Relationship between Acceptance of Immigrants and Community Attachment
+# # summarizing acceptance index for plotting
+# imaccept <- ddply(alldat, .(city), summarise, im = mean(as.numeric(as.character(imAccept)), na.rm = T), comattach = mean(comAttach, na.rm = T))
+# imaccept$colorcode <- "All Other Citites"
+# imaccept[imaccept$city %in% c("Biloxi, MS", "Detroit, MI", "Milledgeville, GA", "State College, PA"), ]$colorcode <- as.character(imaccept$city[imaccept$city %in% c("Biloxi, MS", "Detroit, MI", "Milledgeville, GA", "State College, PA")])
+# 
+# imaccept_4cities <- imaccept[imaccept$colorcode != "All Other Citites", ]
+# imaccept_4cities$glyph <- str_sub(imaccept_4cities$city, 1, 1)
+# 
+# # code for scatterplot
+# immigrantplot <- qplot(im, comattach, data = subset(imaccept, colorcode == "All Other Citites"), geom = "point", color = I("gray")) + 
+#   xlab("How accepting are you\nof immigrants?") + 
+#   ylab(NULL) + 
+#   theme_bw() + 
+#   theme(legend.position = "") + 
+#   scale_x_continuous(limits = c(xmin, xmax)) + 
+#   scale_y_continuous(limits = c(ymin, ymax)) + 
+#   geom_text(data = imaccept_4cities, aes(label = glyph), colour = colorscheme[-1], size = 7) + 
+#   coord_fixed() 
+# 
+# 
+# ## Relationship between Acceptance of Racial/Ethnic Minorities and Community Attachment
+# # summarizing acceptance index for plotting
+# raceaccept <- ddply(alldat, .(city), summarise, ra = mean(as.numeric(as.character(raceAccept)), na.rm = T), comattach = mean(comAttach, na.rm = T))
+# raceaccept$colorcode <- "All Other Citites"
+# raceaccept[raceaccept$city %in% c("Biloxi, MS", "Detroit, MI", "Milledgeville, GA", "State College, PA"), ]$colorcode <- as.character(raceaccept$city[raceaccept$city %in% c("Biloxi, MS", "Detroit, MI", "Milledgeville, GA", "State College, PA")])
+# 
+# raceaccept_4cities <- raceaccept[raceaccept$colorcode != "All Other Citites", ]
+# raceaccept_4cities$glyph <- str_sub(raceaccept_4cities$city, 1, 1)
+# 
+# # code for scatterplot
+# raceplot <- qplot(ra, comattach, data = subset(raceaccept, colorcode == "All Other Citites"), geom = "point", color = I("gray")) +
+#   xlab("How accepting are you\nof racial/ethnic minorities?") + 
+#   ylab(NULL) + 
+#   theme_bw() + theme(legend.position = "") + 
+#   scale_x_continuous(limits = c(xmin, xmax)) + 
+#   scale_y_continuous(limits = c(ymin, ymax)) + 
+#   geom_text(data = raceaccept_4cities, aes(label = glyph), colour = colorscheme[-1], size = 7) + 
+#   coord_fixed()
 
 
 # Figure 9: scatterplots combined into one graphic window
