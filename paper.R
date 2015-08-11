@@ -378,6 +378,33 @@ cap1 <- ggplot(sc_cai_hist[[1]], aes(x = bins, y = weights)) +
   scale_x_discrete(breaks = 1:5) + 
   theme_bw()
 
+# # Alternative specification....
+# ggplot(subset(scdata, year == 2008), aes(x = comAttach)) + 
+#   geom_histogram(aes(y = (..count..)/sum(..count..), weight = svywt), binwidth = 1/3,  
+#                  fill = StaColor, colour = I("black")) + 
+# #   facet_grid(year ~ .) +
+#   xlab("CAI") + 
+#   ylab("Rel. Frequency") +
+#   theme_bw()
+# 
+# 
+# ggplot(subset(scdata, year == 2009), aes(x = comAttach)) + 
+#   geom_histogram(aes(y = (..count..)/sum(..count..)), binwidth = 1/3,  
+#                  fill = StaColor, colour = I("black")) + 
+#   #   facet_grid(year ~ .) +
+#   xlab("CAI") + 
+#   ylab("Rel. Frequency") +
+#   theme_bw()
+# 
+# ggplot(subset(scdata, year == 2010), aes(x = comAttach)) + 
+#   geom_histogram(aes(y = (..count..)/sum(..count..)), binwidth = 1/3,  
+#                  fill = StaColor, colour = I("black")) + 
+#   #   facet_grid(year ~ .) +
+#   xlab("CAI") + 
+#   ylab("Rel. Frequency") +
+#   theme_bw()
+
+  
 
 cap2 <- ggplot(det_cai_hist[[1]], aes(x = bins, y = weights)) + 
   geom_bar(stat = "identity", width = 1, fill = DetColor, colour = I("black")) + 

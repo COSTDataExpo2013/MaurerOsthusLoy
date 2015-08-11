@@ -44,8 +44,8 @@ surveyhistdata <- function(data, variable, year = NULL, bin.width) {
   xupper <- xcenters + 0.5 * bin.width
   
   # Cutting the variable into the bins
-  data$bins <- cut(data[, variable], breaks = c(xlower[1], xupper), labels = round(xcenters, 
-                                                                                   2))
+  data$bins <- cut(data[, variable], breaks = c(xlower[1], xupper), 
+                   labels = round(xcenters, 2))
   
   # Working with the weights
   data$denom <- sum(data$svywt)
