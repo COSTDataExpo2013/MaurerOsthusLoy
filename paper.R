@@ -113,12 +113,16 @@ index_names <- function(var, value) {
   return(value)
 }
 
-fig1_df <- melt(cityyearagg, id.vars = c("city", "year", "colorcode", "linetype"), measure.vars = c("comAttach", "civicInv", "economy", "aesthetic"), variable.name = "scale")
+fig1_df <- melt(cityyearagg, id.vars = c("city", "year", "colorcode", "linetype"), 
+                measure.vars = c("comAttach", "civicInv", "economy", "aesthetic"), 
+                variable.name = "scale")
 fig1_df$scale <- index_names("scale", fig1_df$scale)
 
 ggplot(fig1_df, aes(x = year, y = value, group = city)) +
   geom_line(colour = I("gray")) + 
-  geom_line(data = subset(fig1_df, colorcode != "All Other Cities"), aes(group = city, colour = colorcode, linetype = linetype), size = I(1.25)) +
+  geom_line(data = subset(fig1_df, colorcode != "All Other Cities"), 
+            aes(group = city, colour = colorcode, linetype = linetype), 
+            size = I(1.25)) +
   scale_colour_manual("City", values = citycolors[-1]) +
   scale_linetype_identity() +
   scale_x_continuous(breaks = c(2008, 2009, 2010)) +
@@ -127,8 +131,8 @@ ggplot(fig1_df, aes(x = year, y = value, group = city)) +
   xlab("Year") +
   theme_bw() +
   theme(legend.position="top", legend.text=element_text(size = 12), legend.title=element_text(size = 12)) + 
-  guides(colour = guide_legend(override.aes = list(linetype = c("dotdash", "dotted", "twodash", "dashed"), size = .9), 
-                               keywidth = 3))
+  guides(colour = guide_legend(override.aes = list(linetype = c("dotdash", "dotted", "twodash", "dashed"), 
+                                                   size = .9), keywidth = 3))
 
 # 
 # 
